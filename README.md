@@ -59,7 +59,10 @@ AI was used as a learning tool, not a code generator.
 
 
 ## <h2 style="color:#00d9ff">Project Structure</h2>
+- 🏗️ STRUCTS
+- t_simulation / t_coder / t_dongle / t_arbiter
 
+- 📁 FICHIERS
 ```
 codexion/
 ├── main.c          → chef d'orchestre
@@ -71,6 +74,28 @@ codexion/
 ├── heap_arbiter.c  → priority queue + arbitrage (fifo/edf)
 └── codexion.h      → structs et prototypes
 ```
+
+- 🔄 SÉQUENCE
+```
+ALL CODER                    HEAP_ARBITER              MONITOR
+│                        │                    │                    │
+|  want 2 dongles        │                    │                    │
+|                 -->   go into heap          │                    │
+├  wait for a signal     │                    │                    │
+│                        | notify -dongle free|                    │
+│                        |determin who has priority                │
+│    wake up             │   🔔signal!       │                    │
+| ─ take 2 dongles       │                    │                    │
+| ─ compile              │                    |    watch           |
+| ─ release 2 dongles    │                    │                    │
+|  notify arbiter  -->   | dongle free(restart process prority)    |
+│                        |                    |                    │
+| ─ debug                │                    │                    │
+| ─ refactor             │                    │                    │
+|                        │                    |if burnout → stop ! │
+└── restart              │                    |                    |
+```
+
 ## <h2 style="color:#00d9ff">Usage:</h2>
 ### <h3 style="color:#39ff14">Run with Makefile</h3>
 
