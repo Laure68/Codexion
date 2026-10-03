@@ -60,19 +60,34 @@ AI was used as a learning tool, not a code generator.
 
 ## <h2 style="color:#00d9ff">Project Structure</h2>
 - 🏗️ STRUCTS
-- t_simulation / t_coder / t_dongle / t_arbiter
+- **t_simulation** — The central hub of the program.
+Holds all the parameters needed to run the simulation
+(number of coders, timings, flags) and gives every 
+thread access to shared resources (coders, dongles, arbiter).
+- **t_coder** — Represents a single coder.
+Holds all the information specific to one coder :
+its id, compile count, last compile time,
+and pointers to its left and right dongles.
+- **t_dongle** — Represents a single dongle (shared resource).
+Holds its availability state, cooldown timer,
+and a mutex to protect concurrent access.
+- **t_arbiter** — The scheduler and notifier of the simulation.
+Manages the priority queue (heap) of waiting coders,
+determines who gets the next dongle based on the 
+chosen policy (fifo or edf), and signals the 
+winning coder via a condition variable 🔔.
 
 - 📁 FICHIERS
 ```
 codexion/
-├── main.c          → chef d'orchestre
-├── parser.c        → lit et vérifie les args
-├── simulation.c    → init, lancement, arrêt
-├── coder.c         → cycle de vie du coder
-├── dongle.c        → prise, relâche, cooldown
-├── monitor.c       → détection burnout
+├── main.c          → orchestrator
+├── parser.c        → read and validate args
+├── simulation.c    → init, launch, stop
+├── coder.c         → coder lifecycle
+├── dongle.c        → take, release, cooldown
+├── monitor.c       → burnout detection
 ├── heap_arbiter.c  → priority queue + arbitrage (fifo/edf)
-└── codexion.h      → structs et prototypes
+└── codexion.h      → structs and prototypes
 ```
 
 - 🔄 SÉQUENCE

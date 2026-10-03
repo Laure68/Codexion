@@ -31,7 +31,6 @@ t_coder
 t_dongle
 ├── id
 ├── mutex
-├── cond
 ├── last_released_time
 └── cooldown
 

@@ -1,8 +1,11 @@
 #include "codexion.h"
 
-/*heap.c
-├── heap_init()     → créer la heap
-├── heap_push()     → ajouter un coder
-├── heap_pop()      → retirer le prioritaire
-├── heap_free()     → libérer la mémoire
-└── heap_compare()  → fifo ou edf ?*/
+/*heap_arbiter.c
+├── arbiter_init()
+├── arbiter_push()
+├── arbiter_pop()
+├── arbiter_free()
+└── arbiter_compare()   → 🎯 LA fonction clé !
+                           fifo  : compare arrival time
+                           edf   : compare deadline
+                           lifo  : inverse of fifo*/
