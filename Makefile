@@ -12,15 +12,20 @@ SRC =	coder.c
 		parser.c
 		simulation.c
 
+
+#source file names to object file names using pattern substitution.
 SOURCES_FILES = $(SRC)
 
+#The OBJECT_FILES variable automatically converts
 OBJECT_FILES = $(SOURCES_FILES:.c=.o)
 
 all: $(NAME)
-
+# # Linking object files into executable
 $(NAME): $(OBJECT_FILES)
 	$(CC) $(CFLAGS) $(OBJECT_FILES) -o $(NAME)
-
+#COMPILATION OF SOURCE FILES
+#Using %.o: %.c allows you to benefit
+#from make optimization to recompile only what is necessary
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -32,4 +37,5 @@ fclean: clean
 
 re: fclean all
 
+#Avoiding conflicts and improving performance
 .PHONY : all clean fclean re
