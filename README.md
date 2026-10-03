@@ -77,23 +77,22 @@ codexion/
 
 - 🔄 SÉQUENCE
 ```
-ALL CODER                    HEAP_ARBITER              MONITOR
-│                        │                    │                    │
-|  want 2 dongles        │                    │                    │
-|                 -->   go into heap          │                    │
-├  wait for a signal     │                    │                    │
-│                        | notify -dongle free|                    │
-│                        |determin who has priority                │
-│    wake up             │   🔔signal!       │                    │
-| ─ take 2 dongles       │                    │                    │
-| ─ compile              │                    |    watch           |
-| ─ release 2 dongles    │                    │                    │
-|  notify arbiter  -->   | dongle free(restart process prority)    |
-│                        |                    |                    │
-| ─ debug                │                    │                    │
-| ─ refactor             │                    │                    │
-|                        │                    |if burnout → stop ! │
-└── restart              │                    |                    |
+     ALL CODER                    HEAP_ARBITER                           MONITOR
+│                          │                                         │                    │
+|    want 2 dongles        │                                         │                    │
+|                        ---->     go into heap                      │                    │
+├    wait for a signal     │                                         │                    │
+│                          |     notify -dongle free                 |                    │
+│                          |     determin who has priority           |                    │
+│     ⬆️ WAKE UP ⬆️       │       🔔 signal 🔔                     │                    │
+|     take 2 dongles       │                                         │                    │
+|     compile              │                                         |    watch           |
+|     release 2 dongles    │                                         │                    │
+|     notify arbiter      -->  dongle free(restart process priority) |                    |
+|     debug                │                                         │                    │
+|     refactor             │                                         │                    │
+|                          │                                         |if burnout → stop ! │
+└──   restart              │                                         |                    |
 ```
 
 ## <h2 style="color:#00d9ff">Usage:</h2>
