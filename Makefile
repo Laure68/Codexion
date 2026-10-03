@@ -5,10 +5,12 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread
 
 SRC =	coder.c
-		dungle.c
+		dongle.c
+		heap_arbiter.c
 		main.c
 		monitor.c
-		simulator.c
+		parser.c
+		simulation.c
 
 SOURCES_FILES = $(SRC)
 
@@ -17,7 +19,7 @@ OBJECT_FILES = $(SOURCES_FILES:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJECT_FILES)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJECT_FILES) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -30,4 +32,4 @@ fclean: clean
 
 re: fclean all
 
-PHONY : all clean fclean re
+.PHONY : all clean fclean re

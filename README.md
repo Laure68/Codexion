@@ -68,8 +68,27 @@ codexion/
 ├── coder.c         → cycle de vie du coder
 ├── dongle.c        → prise, relâche, cooldown
 ├── monitor.c       → détection burnout
-├── heap.c          → priority queue (fifo/edf)
+├── heap_arbiter.c          → priority queue (fifo/edf)
 └── codexion.h      → structs et prototypes
+```
+## <h2 style="color:#39ff14">Usage:</h2>
+### <h3 style="color:#39ff14">Run with Makefile</h3>
+
+```bash
+make all
+make fclean
+make clean
+make re
+```
+
+### <h3 style="color:#39ff14">Run manually</h3>
+
+```bash
+./codexion 5 800 200 100 100 3 50 fifo
+./codexion 5 800 200 100 100 3 50 edf
+./codexion [number_of_coders] [time_to_burnout] [time_to_compile] 
+           [time_to_debug] [time_to_refactor] 
+           [number_of_compiles_required] [dongle_cooldown] [scheduler]
 ```
 
 ## <h2 style ="color:#00d9ff">"Blocking cases handled"</h2>
