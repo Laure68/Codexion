@@ -60,7 +60,11 @@ typedef struct s_arbiter
 
 
 /*coder*/
-
+void *coder_routine(void *arg);
+void coder_compile(t_coder *coder);
+void coder_debug(t_coder *coder);
+void coder_refactor(t_coder *coder);
+void log_print(t_coder *coder, char *information);
 
 /*dungle*/
 
@@ -78,5 +82,7 @@ int check_coders(char *av[]);
 
 /*simulation*/
 
+/*tools*/
+long get_time_ms(void);
 
 #endif

@@ -20,6 +20,7 @@
 └── check_end()    → met le flag_end à 1, arrête tout
 simulation.c
 ├── init_simulation()
+
 ├── init_coders()
 ├── init_dongles()
 ├── init_arbiter()

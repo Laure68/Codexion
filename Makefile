@@ -11,6 +11,7 @@ SRC =	coder.c
 		monitor.c
 		parser.c
 		simulation.c
+		tools.c
 
 
 #source file names to object file names using pattern substitution.
