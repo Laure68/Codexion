@@ -38,6 +38,7 @@ typedef struct s_coder
     long last_compile_time;
     t_dongle *dongle_left;
     t_dongle *dongle_right;
+    t_simulation *data;
 }   t_coder;
 
 typedef struct s_dongle
