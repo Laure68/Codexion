@@ -4,6 +4,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
+# include <string.h>
 # include <pthread.h>
 # include <sys/time.h> 
 
@@ -44,7 +45,7 @@ typedef struct s_dongle
     int id;
     pthread_mutex_t mutex;
     long last_released_time;
-    long cooldown;
+    long dongle_cooldown;
 }   t_dongle;
 
 typedef struct s_arbiter
@@ -68,6 +69,11 @@ typedef struct s_arbiter
 /*monitor*/
 
 /*parser*/
+int parse_args(int ac, char *av[], t_simulation *data);
+int parse_args_data(char *av[], t_simulation *data);
+int check_numbers(char *av[]);
+int check_scheduler(char *av[]);
+int check_coders(char *av[]);
 
 /*simulation*/
 
