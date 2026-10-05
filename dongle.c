@@ -6,19 +6,9 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:28:36 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 11:38:29 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/05 11:49:19 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-typedef struct s_dongle
-{
-    int id;
-    pthread_mutex_t mutex;
-    long last_released_time;
-    long dongle_cooldown;
-}   t_dongle;
-
-
 
 #include "codexion.h"
 
@@ -32,10 +22,10 @@ void dongle_init(t_dongle *dongle, t_simulation *data, int index)
 }
 
 /*dongle_take()        → lock + check availability + take*/
-int dongle_take(t_dongle *dongle, t_simulation *data, t_coder *coder)
+int dongle_take(t_dongle *dongle, t_coder *coder)
 {
     pthread_mutex_lock(&dongle->mutex);
-    if (check_cooldown(dongle, data)== 0)
+    if (check_cooldown(dongle)== 0)
     {
         dongle->is_available = 0;
         log_print(coder, "has taken a dongle");
@@ -69,3 +59,7 @@ int check_cooldown(t_dongle *dongle)
 }
 
 /*dongle_destroy()     → destroy mutex + free*/
+void dongle_destroy(t_dongle *dongle)
+{
+    pthread_mutex_destroy(&dongle->mutex);
+}
