@@ -29,14 +29,17 @@ void *coder_routine(void *arg)
 /*coder_compile()      → take dongles + compile + release*/
 void coder_compile(t_coder *coder)
 {
-    if (dongle_take(coder->dongle_left, coder) != 0)
-        return ;
     if (dongle_take(coder->dongle_right, coder) != 0)
         return ;
+    if (dongle_take(coder->dongle_left, coder) != 0)
+    {
+        dongle_release(coder->dongle_right, coder->data);
+        return ;
+    }    
     log_print(coder, "is compiling");
     usleep(coder->data->time_to_compile * 1000);
-    dongle_release(coder->dongle_left);
-    dongle_release(coder->dongle_right);
+    dongle_release(coder->dongle_left, coder->data);
+    dongle_release(coder->dongle_right, coder->data);
    coder->compile_count += 1;
    pthread_cond_signal(&coder->data->arbiter->dongle_ready);
 }

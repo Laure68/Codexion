@@ -13,11 +13,13 @@
 #include "codexion.h"
 
 /*init_simulation()   → fills t_simulation with parsed args*/
-void init_simulation(t_simulation *data)
+int init_simulation(t_simulation *data)
 {
     data->start_time = get_time_ms();
     data->flag_end = 0;
-    pthread_mutex_init(&data->mutex_print, NULL);
+    if (pthread_mutex_init(&data->mutex_print, NULL) != 0)
+        return (1);
+    return (0);
 }
 /*init_coders()       → initializes the t_coder array
 Coder 1 ── Dongle 0 ── Coder 2
@@ -75,10 +77,10 @@ int init_arbiter(t_simulation *data)
     data->arbiter = malloc(sizeof(t_arbiter));
     if (!data->arbiter)
         return (1);
-    data->arbiter->nodes = malloc(sizeof(t_coder *) * data->number_of_coders);
-    if(!data->arbiter->nodes)
+    data->arbiter->coder_queue = malloc(sizeof(t_coder *) * data->number_of_coders);
+    if(!data->arbiter->coder_queue)
         return (1);
-    memset(data->arbiter->nodes, 0, sizeof(t_coder *) * data->number_of_coders);
+    memset(data->arbiter->coder_queue, 0, sizeof(t_coder *) * data->number_of_coders);
     data->arbiter->nb_coder_wait = 0;
     data->arbiter->scheduler = data->scheduler;
     pthread_cond_init(&data->arbiter->dongle_ready, NULL);

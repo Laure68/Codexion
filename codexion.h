@@ -64,7 +64,7 @@ typedef struct s_dongle
 
 typedef struct s_arbiter
 {
-    t_coder **nodes;
+    t_coder **coder_queue;
     int nb_coder_wait;
     t_scheduler scheduler;
     pthread_mutex_t mutex;
