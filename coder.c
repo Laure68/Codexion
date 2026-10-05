@@ -1,14 +1,14 @@
-
-
-
-
-
-
-
-
-
-
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   coder.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/05 10:27:45 by lmeny             #+#    #+#             */
+/*   Updated: 2026/10/05 11:47:31 by lmeny            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "codexion.h"
 
@@ -29,9 +29,9 @@ void *coder_routine(void *arg)
 /*coder_compile()      → take dongles + compile + release*/
 void coder_compile(t_coder *coder)
 {
-    if (dongle_take(coder->dongle_left) != 0)
+    if (dongle_take(coder->dongle_left, coder) != 0)
         return ;
-    if (dongle_take(coder->dongle_right) != 0)
+    if (dongle_take(coder->dongle_right, coder) != 0)
         return ;
     log_print(coder, "is compiling");
     usleep(coder->data->time_to_compile * 1000);
@@ -61,5 +61,5 @@ void log_print(t_coder *coder, char *information)
     pthread_mutex_lock(&coder->data->mutex_print);
     timestamp = (get_time_ms()-(coder->data->start_time));
     printf("%ld %d %s\n", timestamp, coder->id, information);
-    pthread_mutex_unlock(&coder->data->mutex_print); 
+    pthread_mutex_unlock(&coder->data->mutex_print);
 }

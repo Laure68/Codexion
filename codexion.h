@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   codexion.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/05 10:27:12 by lmeny             #+#    #+#             */
+/*   Updated: 2026/10/05 12:50:49 by lmeny            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CODEXION_H
 # define CODEXION_H
 
@@ -6,7 +18,7 @@
 # include <stdio.h>
 # include <string.h>
 # include <pthread.h>
-# include <sys/time.h> 
+# include <sys/time.h>
 
 typedef enum e_scheduler
 {
@@ -44,6 +56,7 @@ typedef struct s_coder
 typedef struct s_dongle
 {
     int id;
+    int is_available;
     pthread_mutex_t mutex;
     long last_released_time;
     long dongle_cooldown;
@@ -55,7 +68,7 @@ typedef struct s_arbiter
     int nb_coder_wait;
     t_scheduler scheduler;
     pthread_mutex_t mutex;
-    phthread_cond_t dongle_ready;
+    pthread_cond_t dongle_ready;
 }   t_arbiter;
 
 
@@ -66,12 +79,20 @@ void coder_debug(t_coder *coder);
 void coder_refactor(t_coder *coder);
 void log_print(t_coder *coder, char *information);
 
-/*dungle*/
+/*dongle*/
+void dongle_init(t_dongle *dongle, t_simulation *data, int index);
+int dongle_take(t_dongle *dongle, t_coder *coder);
+void dongle_release(t_dongle *dongle, t_simulation *data);
+int check_cooldown(t_dongle *dongle);
+void dongle_destroy(t_dongle *dongle);
 
 /*heap_arbiter*/
 
 
 /*monitor*/
+void *monitor_routine(void *arg);
+void check_coders(t_simulation *data);
+int is_burned_out(t_simulation *data, int i);
 
 /*parser*/
 int parse_args(int ac, char *av[], t_simulation *data);
@@ -81,6 +102,11 @@ int check_scheduler(char *av[]);
 int check_coders(char *av[]);
 
 /*simulation*/
+void init_simulation(t_simulation *data);
+int init_coders(t_simulation *data);
+int init_dongles(t_simulation *data);
+int init_arbiter(t_simulation *data);
+int check_end(t_simulation *data);
 
 /*tools*/
 long get_time_ms(void);

@@ -1,14 +1,14 @@
-
-
-
-
-
-
-
-
-
-
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lmeny <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/05 10:30:09 by lmeny             #+#    #+#             */
+/*   Updated: 2026/10/05 10:30:14 by lmeny            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "codexion.h"
 
@@ -39,9 +39,9 @@ int parse_args_data(char *av[], t_simulation *data)
     data->time_to_refactor = atoi(av[5]);
     data->number_of_compiles_required = atoi(av[6]);
     data->dongle_cooldown = atoi(av[7]);
-    if (strcmp(av[8], "fifo") ==0 )
+    if (strcmp(av[8], "fifo") == 0)
         data->scheduler = FIFO;
-    else 
+    else
         data->scheduler = EDF;
     data->number_of_dongles = data->number_of_coders;
     return (0);
