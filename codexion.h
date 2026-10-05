@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:27:12 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 11:27:52 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/05 12:50:49 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,20 @@ void coder_debug(t_coder *coder);
 void coder_refactor(t_coder *coder);
 void log_print(t_coder *coder, char *information);
 
-/*dungle*/
+/*dongle*/
+void dongle_init(t_dongle *dongle, t_simulation *data, int index);
+int dongle_take(t_dongle *dongle, t_coder *coder);
+void dongle_release(t_dongle *dongle, t_simulation *data);
+int check_cooldown(t_dongle *dongle);
+void dongle_destroy(t_dongle *dongle);
 
 /*heap_arbiter*/
 
 
 /*monitor*/
+void *monitor_routine(void *arg);
+void check_coders(t_simulation *data);
+int is_burned_out(t_simulation *data, int i);
 
 /*parser*/
 int parse_args(int ac, char *av[], t_simulation *data);
