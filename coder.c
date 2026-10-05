@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:27:45 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 10:31:18 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/05 11:05:26 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ void *coder_routine(void *arg)
 /*coder_compile()      → take dongles + compile + release*/
 void coder_compile(t_coder *coder)
 {
-    if (dongle_take(coder->dongle_left) != 0)
+    if (dongle_take(coder->dongle_left, coder->data, coder) != 0)
         return ;
-    if (dongle_take(coder->dongle_right) != 0)
+    if (dongle_take(coder->dongle_right, coder->data, coder) != 0)
         return ;
     log_print(coder, "is compiling");
     usleep(coder->data->time_to_compile * 1000);

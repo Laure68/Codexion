@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lmeny <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:27:12 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 10:27:33 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/05 11:27:52 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdio.h>
 # include <string.h>
 # include <pthread.h>
-# include <sys/time.h> 
+# include <sys/time.h>
 
 typedef enum e_scheduler
 {
@@ -56,6 +56,7 @@ typedef struct s_coder
 typedef struct s_dongle
 {
     int id;
+    int is_available;
     pthread_mutex_t mutex;
     long last_released_time;
     long dongle_cooldown;
