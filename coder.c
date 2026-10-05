@@ -1,14 +1,14 @@
-
-
-
-
-
-
-
-
-
-
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   coder.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/05 10:27:45 by lmeny             #+#    #+#             */
+/*   Updated: 2026/10/05 10:31:18 by lmeny            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "codexion.h"
 
@@ -61,5 +61,5 @@ void log_print(t_coder *coder, char *information)
     pthread_mutex_lock(&coder->data->mutex_print);
     timestamp = (get_time_ms()-(coder->data->start_time));
     printf("%ld %d %s\n", timestamp, coder->id, information);
-    pthread_mutex_unlock(&coder->data->mutex_print); 
+    pthread_mutex_unlock(&coder->data->mutex_print);
 }
