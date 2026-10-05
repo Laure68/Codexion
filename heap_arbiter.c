@@ -12,8 +12,6 @@
 
 #include "codexion.h"
 
-
-
 /*heap_arbiter_init()       → initialize heap + mutex + cond*/
 
 /*heap_arbiter_push()       → add coder to heap*/
