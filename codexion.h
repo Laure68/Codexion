@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:27:12 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 12:50:49 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/06 10:59:45 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ typedef struct s_arbiter
     pthread_cond_t dongle_ready;
 }   t_arbiter;
 
-
 /*coder*/
 void *coder_routine(void *arg);
 void coder_compile(t_coder *coder);
@@ -87,11 +86,14 @@ int check_cooldown(t_dongle *dongle);
 void dongle_destroy(t_dongle *dongle);
 
 /*heap_arbiter*/
-
+void heap_arbiter_push(t_simulation *data, t_coder *coder);
+t_coder *heap_arbiter_pop(t_simulation *data);
+int heap_arbiter_free(t_arbiter *arbiter, t_simulation *data);
+int heap_arbiter_compare(t_arbiter *arbiter, t_simulation *data);
 
 /*monitor*/
 void *monitor_routine(void *arg);
-void check_coders(t_simulation *data);
+void check_time_coders(t_simulation *data);
 int is_burned_out(t_simulation *data, int i);
 
 /*parser*/
@@ -110,5 +112,7 @@ int check_end(t_simulation *data);
 
 /*tools*/
 long get_time_ms(void);
+int heap_compare_fifo(t_arbiter *arbiter, t_simulation *data, t_coder *coder);
+int heap_compare_edf(t_arbiter *arbiter, t_simulation *data, t_coder *coder);
 
 #endif

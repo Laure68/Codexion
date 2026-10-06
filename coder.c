@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:27:45 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 11:47:31 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/06 08:37:19 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,13 @@ void coder_compile(t_coder *coder)
     {
         dongle_release(coder->dongle_right, coder->data);
         return ;
-    }    
+    }
     log_print(coder, "is compiling");
     usleep(coder->data->time_to_compile * 1000);
     dongle_release(coder->dongle_left, coder->data);
     dongle_release(coder->dongle_right, coder->data);
-   coder->compile_count += 1;
-   pthread_cond_signal(&coder->data->arbiter->dongle_ready);
+    coder->compile_count += 1;
+    pthread_cond_signal(&coder->data->arbiter->dongle_ready);
 }
 /*coder_debug()        → wait time_to_debug*/
 void coder_debug(t_coder *coder)
