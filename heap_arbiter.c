@@ -22,16 +22,19 @@ void heap_arbiter_push(t_simulation *data, t_coder *coder)
 }
 
 /*heap_arbiter_pop()        → remove and return highest priority coder*/
-
+t_coder *heap_arbiter_pop(t_simulation *data, t_coder *coder)
+{
+	
+}
 /*heap_arbiter_free()       → destroy mutex + cond + free*/
 
 /*heap_arbiter_compare()    → fifo / edf*/
 int heap_arbiter_compare(t_arbiter *arbiter, t_simulation *data)
 {
 	if (arbiter->scheduler == FIFO)
-		heap_compare_fifo(arbiter, data);
+		return (heap_compare_fifo(arbiter, data));
 	if (arbiter->scheduler == EDF)
-		heap_compare_edf(arbiter, data);
+		return (heap_compare_edf(arbiter, data));
 
 }
 
