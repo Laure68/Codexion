@@ -26,23 +26,6 @@ typedef enum e_scheduler
     EDF
 }   t_scheduler;
 
-typedef struct s_simulation
-{
-    int number_of_coders;
-    int number_of_dongles;
-    long time_to_burnout;
-    long time_to_compile;
-    long time_to_debug;
-    long time_to_refactor;
-    int number_of_compiles_required;
-    long start_time;
-    int flag_end;
-    pthread_mutex_t mutex_print;
-    t_coder *coders;
-    t_dongle *dongles;
-    t_arbiter *arbiter;
-}   t_simulation;
-
 typedef struct s_coder
 {
     int id;
@@ -71,6 +54,25 @@ typedef struct s_arbiter
     pthread_cond_t dongle_ready;
 }   t_arbiter;
 
+typedef struct s_simulation
+{
+    int number_of_coders;
+    int number_of_dongles;
+    long time_to_burnout;
+    long time_to_compile;
+    long time_to_debug;
+    long time_to_refactor;
+    int number_of_compiles_required;
+    long start_time;
+    int flag_end;
+    pthread_mutex_t mutex_print;
+    t_coder *coders;
+    t_dongle *dongles;
+    t_arbiter *arbiter;
+    pthread_t *coders_threads;
+    pthread_t monitor_thread;
+}   t_simulation;
+
 /*coder*/
 void *coder_routine(void *arg);
 void coder_compile(t_coder *coder);
@@ -90,6 +92,12 @@ void heap_arbiter_push(t_simulation *data, t_coder *coder);
 t_coder *heap_arbiter_pop(t_simulation *data);
 int heap_arbiter_free(t_arbiter *arbiter, t_simulation *data);
 int heap_arbiter_compare(t_arbiter *arbiter, t_simulation *data);
+
+/*main.c*/
+int	main(int ac, char **av);
+int launch_threads(t_simulation *data);
+int wait_finish_thread(t_simulation *data);
+int clean_simulation(t_simulation *data);
 
 /*monitor*/
 void *monitor_routine(void *arg);

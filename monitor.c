@@ -19,13 +19,13 @@ void *monitor_routine(void *arg)
 	data = (t_simulation *)arg;
 	while (data->flag_end == 0)
 	{
-		check_coders(data);
+		check_time_coders(data);
 		usleep(1000);
 	}
 	return (NULL);
 }
 
-/*check_coders()       → check each coder's last compile time*/
+/*check_time_coders()       → check each coder's last compile time*/
 void check_time_coders(t_simulation *data)
 {
 	int i;
