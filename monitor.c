@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:29:56 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 12:50:02 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/06 08:35:16 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void *monitor_routine(void *arg)
 }
 
 /*check_coders()       → check each coder's last compile time*/
-void check_coders(t_simulation *data)
+void check_time_coders(t_simulation *data)
 {
 	int i;
 	i = 0;

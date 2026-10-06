@@ -13,9 +13,9 @@
 #include "codexion.h"
 
 /*dongle_init()        → initialize dongle + mutex*/
-void dongle_init(t_dongle *dongle, t_simulation *data, int index)
+void dongle_init(t_dongle *dongle, t_simulation *data, int ind)
 {
-    dongle->id = index;
+    dongle->id = ind;
     pthread_mutex_init(&dongle->mutex, NULL);
     dongle->dongle_cooldown = data->dongle_cooldown;
     dongle->last_released_time = 0;
@@ -38,7 +38,9 @@ int dongle_take(t_dongle *dongle, t_coder *coder)
     pthread_mutex_unlock(&dongle->mutex);
     return (0);
 }
-/* dongle_release()     → release + start cooldown timer*/
+/* dongle_release()     → release + start cooldown timer
+is_available = 1 free // 0 = take
+*/
 void dongle_release(t_dongle *dongle, t_simulation *data)
 {
     pthread_mutex_lock(&dongle->mutex);

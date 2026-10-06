@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:27:12 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 12:50:49 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/06 10:59:45 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,12 @@ typedef struct s_dongle
 
 typedef struct s_arbiter
 {
-    t_coder **nodes;
+    t_coder **coder_queue;
     int nb_coder_wait;
     t_scheduler scheduler;
     pthread_mutex_t mutex;
-    phthread_cond_t dongle_ready;
+    pthread_cond_t dongle_ready;
 }   t_arbiter;
-
 
 /*coder*/
 void *coder_routine(void *arg);
@@ -87,11 +86,11 @@ int check_cooldown(t_dongle *dongle);
 void dongle_destroy(t_dongle *dongle);
 
 /*heap_arbiter*/
-
+void heap_arbiter_push(t_simulation *data, t_coder *coder);
 
 /*monitor*/
 void *monitor_routine(void *arg);
-void check_coders(t_simulation *data);
+void check_time_coders(t_simulation *data);
 int is_burned_out(t_simulation *data, int i);
 
 /*parser*/
@@ -102,8 +101,15 @@ int check_scheduler(char *av[]);
 int check_coders(char *av[]);
 
 /*simulation*/
+void init_simulation(t_simulation *data);
+int init_coders(t_simulation *data);
+int init_dongles(t_simulation *data);
+int init_arbiter(t_simulation *data);
+int check_end(t_simulation *data);
 
 /*tools*/
 long get_time_ms(void);
+int heap_compare_fifo(t_arbiter *arbiter, t_simulation *data, t_coder *coder);
+int heap_compare_edf(t_arbiter *arbiter, t_simulation *data, t_coder *coder);
 
 #endif

@@ -39,7 +39,7 @@ int parse_args_data(char *av[], t_simulation *data)
     data->time_to_refactor = atoi(av[5]);
     data->number_of_compiles_required = atoi(av[6]);
     data->dongle_cooldown = atoi(av[7]);
-    if (strcmp(av[8], "fifo") ==0 )
+    if (strcmp(av[8], "fifo") == 0)
         data->scheduler = FIFO;
     else
         data->scheduler = EDF;
