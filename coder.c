@@ -17,9 +17,10 @@ void *coder_routine(void *arg)
 {
     t_coder *coder;
     coder = (t_coder *)arg;
+
     while (coder->data->flag_end == 0)
     {
-        heap_arbiter_push(coder);
+        heap_arbiter_push(coder->data, coder);
         coder_compile(coder);
         coder_debug(coder);
         coder_refactor(coder);
@@ -27,14 +28,14 @@ void *coder_routine(void *arg)
     return (NULL);
 }
 /*coder_compile()      → take dongles + compile + release*/
-void coder_compile(t_coder *coder)
+int coder_compile(t_coder *coder)
 {
     if (dongle_take(coder->dongle_right, coder) != 0)
-        return ;
+        return (1);
     if (dongle_take(coder->dongle_left, coder) != 0)
     {
         dongle_release(coder->dongle_right, coder->data);
-        return ;
+        return (1);
     }
     log_print(coder, "is compiling");
     usleep(coder->data->time_to_compile * 1000);
@@ -42,10 +43,14 @@ void coder_compile(t_coder *coder)
     dongle_release(coder->dongle_right, coder->data);
     coder->compile_count += 1;
     pthread_cond_signal(&coder->data->arbiter->dongle_ready);
+    check_end(coder->data);
+    return (0);
 }
 /*coder_debug()        → wait time_to_debug*/
 void coder_debug(t_coder *coder)
 {
+    if (coder->data->flag_end == 1)
+        return;
     log_print(coder, "is debugging");
     usleep(coder->data->time_to_debug * 1000);
 }
@@ -53,6 +58,8 @@ void coder_debug(t_coder *coder)
 /*coder_refactor()     → wait time_to_refactor*/
 void coder_refactor(t_coder *coder)
 {
+    if (coder->data->flag_end == 1)
+        return;
     log_print(coder, "is refactoring");
     usleep(coder->data->time_to_refactor * 1000);
 }

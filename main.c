@@ -20,9 +20,9 @@ int	main(int ac, char **av)
         return (1);
     if (init_simulation(&data) != 0)
         return (1);
-    if (init_coders(&data) != 0)
-        return (1);
     if (init_dongles(&data) != 0)
+        return (1);
+    if (init_coders(&data) != 0)
         return (1);
     if (init_arbiter(&data) != 0)
         return (1);
@@ -70,7 +70,7 @@ int wait_finish_thread(t_simulation *data)
 int clean_simulation(t_simulation *data)
 {
     int i;
-    heap_arbiter_free(data->arbiter, data);
+    heap_arbiter_free(data);
     i = 0;
     while ((i < data->number_of_dongles))
     {

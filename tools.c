@@ -20,14 +20,15 @@ long get_time_ms(void)
     return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int heap_compare_fifo(t_arbiter *arbiter, t_simulation *data)
+int heap_compare_fifo(t_arbiter *arbiter)
 {
 	if (arbiter->scheduler == FIFO)
 		return (0);
+    return (-1);
 }
 
 /*for heap_arbiter_compare()   */
-int heap_compare_edf(t_arbiter *arbiter, t_simulation *data)
+int heap_compare_edf(t_simulation *data)
 {
 	long 	resting_time;
 	long 	position1;

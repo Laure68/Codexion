@@ -20,21 +20,14 @@
 # include <pthread.h>
 # include <sys/time.h>
 
+typedef struct s_simulation t_simulation;
+typedef struct s_coder t_coder; 
+
 typedef enum e_scheduler
 {
     FIFO,
     EDF
 }   t_scheduler;
-
-typedef struct s_coder
-{
-    int id;
-    int compile_count;
-    long last_compile_time;
-    t_dongle *dongle_left;
-    t_dongle *dongle_right;
-    t_simulation *data;
-}   t_coder;
 
 typedef struct s_dongle
 {
@@ -54,6 +47,16 @@ typedef struct s_arbiter
     pthread_cond_t dongle_ready;
 }   t_arbiter;
 
+typedef struct s_coder
+{
+    int id;
+    int compile_count;
+    long last_compile_time;
+    t_dongle *dongle_left;
+    t_dongle *dongle_right;
+    t_simulation *data;
+}   t_coder;
+
 typedef struct s_simulation
 {
     int number_of_coders;
@@ -62,6 +65,7 @@ typedef struct s_simulation
     long time_to_compile;
     long time_to_debug;
     long time_to_refactor;
+    long dongle_cooldown;
     int number_of_compiles_required;
     long start_time;
     int flag_end;
@@ -69,13 +73,14 @@ typedef struct s_simulation
     t_coder *coders;
     t_dongle *dongles;
     t_arbiter *arbiter;
+    t_scheduler scheduler;
     pthread_t *coders_threads;
     pthread_t monitor_thread;
 }   t_simulation;
 
 /*coder*/
 void *coder_routine(void *arg);
-void coder_compile(t_coder *coder);
+int coder_compile(t_coder *coder);
 void coder_debug(t_coder *coder);
 void coder_refactor(t_coder *coder);
 void log_print(t_coder *coder, char *information);
@@ -90,7 +95,7 @@ void dongle_destroy(t_dongle *dongle);
 /*heap_arbiter*/
 void heap_arbiter_push(t_simulation *data, t_coder *coder);
 t_coder *heap_arbiter_pop(t_simulation *data);
-int heap_arbiter_free(t_arbiter *arbiter, t_simulation *data);
+int heap_arbiter_free(t_simulation *data);
 int heap_arbiter_compare(t_arbiter *arbiter, t_simulation *data);
 
 /*main.c*/
@@ -112,7 +117,7 @@ int check_scheduler(char *av[]);
 int check_coders(char *av[]);
 
 /*simulation*/
-void init_simulation(t_simulation *data);
+int init_simulation(t_simulation *data);
 int init_coders(t_simulation *data);
 int init_dongles(t_simulation *data);
 int init_arbiter(t_simulation *data);
@@ -120,7 +125,7 @@ int check_end(t_simulation *data);
 
 /*tools*/
 long get_time_ms(void);
-int heap_compare_fifo(t_arbiter *arbiter, t_simulation *data, t_coder *coder);
-int heap_compare_edf(t_arbiter *arbiter, t_simulation *data, t_coder *coder);
+int heap_compare_fifo(t_arbiter *arbiter);
+int heap_compare_edf(t_simulation *data);
 
 #endif

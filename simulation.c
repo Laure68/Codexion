@@ -77,10 +77,10 @@ int init_arbiter(t_simulation *data)
     data->arbiter = malloc(sizeof(t_arbiter));
     if (!data->arbiter)
         return (1);
-    data->arbiter->coder_queue = malloc(sizeof(t_coder *) * data->number_of_coders);
+    data->arbiter->coder_queue = malloc(sizeof(t_coder *) * (data->number_of_coders + 1));
     if(!data->arbiter->coder_queue)
         return (1);
-    memset(data->arbiter->coder_queue, 0, sizeof(t_coder *) * data->number_of_coders);
+    memset(data->arbiter->coder_queue, 0, sizeof(t_coder *) * (data->number_of_coders + 1));
     data->arbiter->nb_coder_wait = 0;
     data->arbiter->scheduler = data->scheduler;
     pthread_cond_init(&data->arbiter->dongle_ready, NULL);

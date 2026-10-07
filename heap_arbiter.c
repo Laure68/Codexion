@@ -21,13 +21,7 @@ void heap_arbiter_push(t_simulation *data, t_coder *coder)
 	pthread_mutex_unlock(&data->arbiter->mutex);
 }
 
-/*heap_arbiter_pop()        → remove and return highest priority coder
-1. appeler heap_arbiter_compare() pour avoir l'index du prioritaire
-2. sauvegarder le coder à cet index
-3. supprimer ce coder de la queue
-4. décrémenter nb_coder_wait
-5. retourner le coder sauvegardé*/
-
+/*heap_arbiter_pop()        → remove and return highest priority coder*/
 t_coder *heap_arbiter_pop(t_simulation *data)
 {
 	int i;
@@ -43,7 +37,7 @@ t_coder *heap_arbiter_pop(t_simulation *data)
     return (selected);
 }
 /*heap_arbiter_free()       → destroy mutex + cond + free*/
-int heap_arbiter_free(t_arbiter *arbiter, t_simulation *data)
+int heap_arbiter_free(t_simulation *data)
 {
     pthread_mutex_destroy(&data->arbiter->mutex);
     pthread_cond_destroy(&data->arbiter->dongle_ready);
@@ -55,9 +49,9 @@ int heap_arbiter_free(t_arbiter *arbiter, t_simulation *data)
 int heap_arbiter_compare(t_arbiter *arbiter, t_simulation *data)
 {
 	if (arbiter->scheduler == FIFO)
-		return (heap_compare_fifo(arbiter, data));
+		return (heap_compare_fifo(arbiter));
 	if (arbiter->scheduler == EDF)
-		return (heap_compare_edf(arbiter, data));
-
+		return (heap_compare_edf(data));
+    return (0);
 }
 
