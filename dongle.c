@@ -18,14 +18,15 @@ void dongle_init(t_dongle *dongle, t_simulation *data, int ind)
     dongle->id = ind;
     pthread_mutex_init(&dongle->mutex, NULL);
     dongle->dongle_cooldown = data->dongle_cooldown;
-    dongle->last_released_time = get_time_ms();
+    dongle->last_released_time = 0;
 }
 
 /*dongle_take()        → lock + check availability + take*/
 int dongle_take(t_dongle *dongle, t_coder *coder)
 {
     pthread_mutex_lock(&dongle->mutex);
-    if (check_cooldown(dongle)== 0 && dongle->is_available == 1)
+    if (check_cooldown(dongle)== 0 
+        && dongle->is_available == 1)
     {
         dongle->is_available = 0;
         log_print(coder, "has taken a dongle");
@@ -41,13 +42,14 @@ int dongle_take(t_dongle *dongle, t_coder *coder)
 /* dongle_release()     → release + start cooldown timer
 is_available = 1 free // 0 = take
 */
-void dongle_release(t_dongle *dongle, t_simulation *data)
+void dongle_release(t_dongle *dongle, int cooldown)
 {
     pthread_mutex_lock(&dongle->mutex);
     dongle->is_available = 1;
-    dongle->last_released_time = get_time_ms();
+    if (cooldown == 1)
+        dongle->last_released_time = get_time_ms();
     pthread_mutex_unlock(&dongle->mutex);
-    pthread_cond_signal(&data->arbiter->dongle_ready);
+
 }
 
 /*check_cooldown()    → check if cooldown has passed*/

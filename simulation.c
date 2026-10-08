@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:30:23 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 12:52:35 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/07 10:52:03 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,11 @@ int init_simulation(t_simulation *data)
     data->flag_end = 0;
     if (pthread_mutex_init(&data->mutex_print, NULL) != 0)
         return (1);
+    if (pthread_mutex_init(&data->mutex_end, NULL) != 0)
+        return (1);
     return (0);
 }
 /*init_coders()       → initializes the t_coder array
-Coder 1 ── Dongle 0 ── Coder 2
-   |                      |
-Dongle 2              Dongle 1
-   |                      |
-Coder 3 ──────────────────
 i=0 → (0+1) % 3 = 1  ✅
 i=1 → (1+1) % 3 = 2  ✅
 i=2 → (2+1) % 3 = 0  ✅ revient à 0 !
@@ -35,10 +32,10 @@ int init_coders(t_simulation *data)
 {
     int i;
     i = 0;
-    data->coders = malloc(sizeof(t_coder) * data->number_of_coders);
+    data->coders = malloc(sizeof(t_coder) * (data->number_of_coders + 1));
     if (!data->coders)
         return(1);
-    memset(data->coders, 0, sizeof(t_coder) * data->number_of_coders);
+    memset(data->coders, 0, sizeof(t_coder) * (data->number_of_coders + 1));
     while (i < data->number_of_coders)
     {
         data->coders[i].id = i + 1;
@@ -47,6 +44,7 @@ int init_coders(t_simulation *data)
         data->coders[i].dongle_left = &data->dongles[i];
         data->coders[i].dongle_right = &data->dongles[(i + 1) % data->number_of_coders];
         data->coders[i].data = data;
+        pthread_mutex_init(&data->coders[i].mutex, NULL);
         i++;
     }
     return (0);
@@ -58,7 +56,7 @@ int init_dongles(t_simulation *data)
 {
     int i;
     i = 0;
-    data->dongles = malloc(sizeof(t_dongle) * data->number_of_dongles);
+    data->dongles = malloc(sizeof(t_dongle) * data->number_of_dongles );
     if(!data->dongles)
         return(1);
     memset(data->dongles, 0,sizeof(t_dongle) * data->number_of_dongles);
@@ -77,10 +75,10 @@ int init_arbiter(t_simulation *data)
     data->arbiter = malloc(sizeof(t_arbiter));
     if (!data->arbiter)
         return (1);
-    data->arbiter->coder_queue = malloc(sizeof(t_coder *) * (data->number_of_coders + 1));
+    data->arbiter->coder_queue = malloc(sizeof(t_coder *) * (data->number_of_coders));
     if(!data->arbiter->coder_queue)
         return (1);
-    memset(data->arbiter->coder_queue, 0, sizeof(t_coder *) * (data->number_of_coders + 1));
+    memset(data->arbiter->coder_queue, 0, sizeof(t_coder *) * (data->number_of_coders));
     data->arbiter->nb_coder_wait = 0;
     data->arbiter->scheduler = data->scheduler;
     pthread_cond_init(&data->arbiter->dongle_ready, NULL);
@@ -91,13 +89,17 @@ int init_arbiter(t_simulation *data)
 int check_end(t_simulation *data)
 {
     int i;
+    int count;
     i = 0;
     while (i < data->number_of_coders)
     {
-        if (data->coders[i].compile_count != data->number_of_compiles_required)
+        pthread_mutex_lock(&data->coders[i].mutex);
+        count = data->coders[i].compile_count;
+        pthread_mutex_unlock(&data->coders[i].mutex);
+        if (count < data->number_of_compiles_required)
             return (0);
         i++;
     }
-    data->flag_end = 1;
+    set_flag_end(data);
     return(1);
 }

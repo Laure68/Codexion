@@ -78,9 +78,9 @@ int check_scheduler(char *av[])
 /* check_coders()      → verify minimum 2 coders*/
 int check_coders(char *av[])
 {
-    if (atoi (av[1]) <= 1)
+    if (atoi (av[1]) < 1)
     {
-        fprintf(stderr, "minimum 2 coders\n");
+        fprintf(stderr, "minimum 1 coders\n");
         return (1);
     }
     return (0);

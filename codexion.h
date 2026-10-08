@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:27:12 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/06 10:59:45 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/07 11:15:01 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <sys/time.h>
 
 typedef struct s_simulation t_simulation;
-typedef struct s_coder t_coder; 
+typedef struct s_coder t_coder;
 
 typedef enum e_scheduler
 {
@@ -38,15 +38,6 @@ typedef struct s_dongle
     long dongle_cooldown;
 }   t_dongle;
 
-typedef struct s_arbiter
-{
-    t_coder **coder_queue;
-    int nb_coder_wait;
-    t_scheduler scheduler;
-    pthread_mutex_t mutex;
-    pthread_cond_t dongle_ready;
-}   t_arbiter;
-
 typedef struct s_coder
 {
     int id;
@@ -55,7 +46,17 @@ typedef struct s_coder
     t_dongle *dongle_left;
     t_dongle *dongle_right;
     t_simulation *data;
+    pthread_mutex_t mutex;
 }   t_coder;
+
+typedef struct s_arbiter
+{
+    t_coder **coder_queue;
+    int nb_coder_wait;
+    t_scheduler scheduler;
+    pthread_mutex_t mutex;
+    pthread_cond_t dongle_ready;
+}   t_arbiter;
 
 typedef struct s_simulation
 {
@@ -70,6 +71,7 @@ typedef struct s_simulation
     long start_time;
     int flag_end;
     pthread_mutex_t mutex_print;
+    pthread_mutex_t mutex_end;
     t_coder *coders;
     t_dongle *dongles;
     t_arbiter *arbiter;
@@ -88,15 +90,16 @@ void log_print(t_coder *coder, char *information);
 /*dongle*/
 void dongle_init(t_dongle *dongle, t_simulation *data, int index);
 int dongle_take(t_dongle *dongle, t_coder *coder);
-void dongle_release(t_dongle *dongle, t_simulation *data);
+void dongle_release(t_dongle *dongle, int cooldown);
 int check_cooldown(t_dongle *dongle);
 void dongle_destroy(t_dongle *dongle);
 
 /*heap_arbiter*/
-void heap_arbiter_push(t_simulation *data, t_coder *coder);
-t_coder *heap_arbiter_pop(t_simulation *data);
+int heap_arbiter_push(t_simulation *data, t_coder *coder);
+t_coder *heap_arbiter_pop(t_arbiter *arbiter, int i);
+void heap_arbiter_wake(t_simulation *data);
 int heap_arbiter_free(t_simulation *data);
-int heap_arbiter_compare(t_arbiter *arbiter, t_simulation *data);
+int heap_arbiter_compare(t_arbiter *arbiter);
 
 /*main.c*/
 int	main(int ac, char **av);
@@ -108,6 +111,8 @@ int clean_simulation(t_simulation *data);
 void *monitor_routine(void *arg);
 void check_time_coders(t_simulation *data);
 int is_burned_out(t_simulation *data, int i);
+int get_flag_end(t_simulation *data);
+void set_flag_end(t_simulation *data);
 
 /*parser*/
 int parse_args(int ac, char *av[], t_simulation *data);
@@ -126,6 +131,8 @@ int check_end(t_simulation *data);
 /*tools*/
 long get_time_ms(void);
 int heap_compare_fifo(t_arbiter *arbiter);
-int heap_compare_edf(t_simulation *data);
+int heap_compare_edf(t_arbiter *arbiter);
+int coder_take_dongles(t_coder *coder);
+int dongles_free(t_coder *coder);
 
 #endif

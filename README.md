@@ -62,7 +62,7 @@ AI was used as a learning tool, not a code generator.
 - 🏗️ STRUCTS
 - **t_simulation** — The central hub of the program.
 Holds all the parameters needed to run the simulation
-(number of coders, timings, flags) and gives every 
+(number of coders, timings, flags) and gives every
 thread access to shared resources (coders, dongles, arbiter).
 - **t_coder** — Represents a single coder.
 Holds all the information specific to one coder :
@@ -73,8 +73,8 @@ Holds its availability state, cooldown timer,
 and a mutex to protect concurrent access.
 - **t_arbiter** — The scheduler and notifier of the simulation.
 Manages the priority queue (heap) of waiting coders,
-determines who gets the next dongle based on the 
-chosen policy (fifo or edf), and signals the 
+determines who gets the next dongle based on the
+chosen policy (fifo or edf), and signals the
 winning coder via a condition variable 🔔.
 
 - 📁 FICHIERS
@@ -87,6 +87,7 @@ codexion/
 ├── dongle.c        → take, release, cooldown
 ├── monitor.c       → burnout detection
 ├── heap_arbiter.c  → priority queue + arbitrage (fifo/edf)
+├── tools.c         → 
 └── codexion.h      → structs and prototypes
 ```
 
@@ -126,8 +127,8 @@ make re
 ./codexion 5 800 200 100 100 3 50 fifo
 ./codexion 5 800 200 100 100 3 50 edf
 explanation :
-./codexion [number_of_coders] [time_to_burnout] [time_to_compile] 
-           [time_to_debug] [time_to_refactor] 
+./codexion [number_of_coders] [time_to_burnout] [time_to_compile]
+           [time_to_debug] [time_to_refactor]
            [number_of_compiles_required] [dongle_cooldown] [scheduler]
 ```
 

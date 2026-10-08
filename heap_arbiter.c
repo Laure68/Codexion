@@ -12,29 +12,54 @@
 
 #include "codexion.h"
 
-/*heap_arbiter_push()       → add coder to heap*/
-void heap_arbiter_push(t_simulation *data, t_coder *coder)
+/*heap_arbiter_push()       → add coder to the queue, wait until the arbiter
+chooses it (first servable coder), take its dongles, remove it from the queue
+returns 0 = dongles taken, 1 = simulation ended*/
+int heap_arbiter_push(t_simulation *data, t_coder *coder)
 {
-	pthread_mutex_lock(&data->arbiter->mutex);
-	data->arbiter->coder_queue[data->arbiter->nb_coder_wait] = coder;
-	data->arbiter->nb_coder_wait += 1;
-	pthread_mutex_unlock(&data->arbiter->mutex);
+   t_arbiter *arbiter;
+   int i;
+   int res;
+    arbiter = data->arbiter;
+    res = 1;
+    pthread_mutex_lock(&arbiter->mutex);
+	arbiter->coder_queue[arbiter->nb_coder_wait] = coder;
+	arbiter->nb_coder_wait += 1;
+    while (get_flag_end(data) == 0 && res == 1)
+    {
+        i = heap_arbiter_compare(arbiter );
+        if (i >= 0 &&  arbiter->coder_queue[i] == coder 
+            && coder_take_dongles(coder) == 0)
+           {
+                heap_arbiter_pop(arbiter, i);
+                res = 0;
+           } 
+        else    
+            pthread_cond_wait(&arbiter->dongle_ready, &arbiter->mutex);
+    }
+        pthread_mutex_unlock(&data->arbiter->mutex);
+    return (res);
 }
 
-/*heap_arbiter_pop()        → remove and return highest priority coder*/
-t_coder *heap_arbiter_pop(t_simulation *data)
+/*heap_arbiter_pop()        → remove and return the coder at index i */
+t_coder *heap_arbiter_pop(t_arbiter *arbiter, int i)
 {
-	int i;
-    int last;
     t_coder *selected;
-    pthread_mutex_lock(&data->arbiter->mutex);
-    i = heap_arbiter_compare(data->arbiter, data);
-    last = data->arbiter->nb_coder_wait -1;
-    selected = data->arbiter->coder_queue[i];
-    data->arbiter->coder_queue[i]= data->arbiter->coder_queue[last];
-    data->arbiter->nb_coder_wait -= 1; 
-    pthread_mutex_unlock(&data->arbiter->mutex);
+    selected = arbiter->coder_queue[i];
+    while (i < arbiter->nb_coder_wait - 1)
+    {
+        arbiter->coder_queue[i]= arbiter->coder_queue[i + 1];
+        i++;
+    }
+    arbiter->nb_coder_wait -= 1;
     return (selected);
+}
+/*heap_arbiter_wake()       → wake every waiting coder (mutex held)*/
+void heap_arbiter_wake(t_simulation *data)
+{
+    pthread_mutex_lock(&data->arbiter->mutex);
+    pthread_cond_broadcast(&data->arbiter->dongle_ready);
+    pthread_mutex_unlock(&data->arbiter->mutex);
 }
 /*heap_arbiter_free()       → destroy mutex + cond + free*/
 int heap_arbiter_free(t_simulation *data)
@@ -45,13 +70,11 @@ int heap_arbiter_free(t_simulation *data)
     free(data->arbiter);
     return (0);
 }
-/*heap_arbiter_compare()    → fifo / edf*/
-int heap_arbiter_compare(t_arbiter *arbiter, t_simulation *data)
+/*heap_arbiter_compare()    → returns fifo / edf*/
+int heap_arbiter_compare(t_arbiter *arbiter)
 {
-	if (arbiter->scheduler == FIFO)
-		return (heap_compare_fifo(arbiter));
 	if (arbiter->scheduler == EDF)
-		return (heap_compare_edf(data));
-    return (0);
+		return (heap_compare_edf(arbiter));
+    return (heap_compare_fifo(arbiter));
 }
 
