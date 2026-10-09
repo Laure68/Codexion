@@ -8,30 +8,30 @@
 ## <h2 style ="color:#00d9ff">“Instructions”</h2>
 ### <h3 style="color:#39ff14"> TEXTE </h3>
 
-|					|													|
-| ----------------	| ------------------------------------------------- |
-|`Program Name`		|codexion										|
-|`Files to Submit`	|Makefile at the root, *.c and *.h					|
-|					|in the folder of your choice						|
-|`Makefile`			|NAME, all, clean, fclean, re						|
-|`Arguments`		|number_of_coders									|
-|					|time_to_burnout time_to_compile					|
-|					|time_to_debug										|
-|					|time_to_refactor number_of_compiles_required		|
-|					|dongle_cooldown scheduler							|
-|`External Function`| pthread_create, pthread_join, pthread_mutex_init,	|
-|					|pthread_mutex_lock,								|
-|					|pthread_mutex_unlock, pthread_mutex_destroy,		|
-|					|pthread_cond_init,									|
-|					|pthread_cond_wait, pthread_cond_timedwait,			|
-|					|pthread_cond_signal,								|
-|					|pthread_cond_broadcast, pthread_cond_destroy,		|
-|					|gettimeofday, clock_gettime,						|
-|					|usleep, write, malloc, free, printf, fprintf,		|
-|					|strcmp, strlen, atoi, memset						|
-|`Libft authorized`	|No													|
-|`Description`		|Coders with threads and mutexes (C)				|
-|					|													|
+|					|									     |
+| ----------------	     |  ---------------------------------------------- |
+|`Program Name`		|codexion									|
+|`Files to Submit`	     |Makefile at the root, *.c and *.h				|
+|					|in the folder of your choice				     |
+|`Makefile`			|NAME, all, clean, fclean, re					|
+|`Arguments`		     |number_of_coders							|
+|					|time_to_burnout time_to_compile				|
+|					|time_to_debug								|
+|					|time_to_refactor number_of_compiles_required	|
+|					|dongle_cooldown scheduler					|
+|`External Function`     |pthread_create, pthread_join, pthread_mutex_init,|
+|					|pthread_mutex_lock,						|
+|					|pthread_mutex_unlock, pthread_mutex_destroy,	|
+|					|pthread_cond_init,							|
+|					|pthread_cond_wait, pthread_cond_timedwait,		|
+|					|pthread_cond_signal,						|
+|					|pthread_cond_broadcast, pthread_cond_destroy,	|
+|					|gettimeofday, clock_gettime,					|
+|					|usleep, write, malloc, free, printf, fprintf,	|
+|					|strcmp, strlen, atoi, memset					|
+|`Libft authorized`	     |No										|
+|`Description`		     |Coders with threads and mutexes (C)			|
+|					|										|
 
 
 
@@ -62,7 +62,7 @@ AI was used as a learning tool, not a code generator.
 - 🏗️ STRUCTS
 - **t_simulation** — The central hub of the program.
 Holds all the parameters needed to run the simulation
-(number of coders, timings, flags) and gives every 
+(number of coders, timings, flags) and gives every
 thread access to shared resources (coders, dongles, arbiter).
 - **t_coder** — Represents a single coder.
 Holds all the information specific to one coder :
@@ -73,8 +73,8 @@ Holds its availability state, cooldown timer,
 and a mutex to protect concurrent access.
 - **t_arbiter** — The scheduler and notifier of the simulation.
 Manages the priority queue (heap) of waiting coders,
-determines who gets the next dongle based on the 
-chosen policy (fifo or edf), and signals the 
+determines who gets the next dongle based on the
+chosen policy (fifo or edf), and signals the
 winning coder via a condition variable 🔔.
 
 - 📁 FICHIERS
@@ -87,23 +87,24 @@ codexion/
 ├── dongle.c        → take, release, cooldown
 ├── monitor.c       → burnout detection
 ├── heap_arbiter.c  → priority queue + arbitrage (fifo/edf)
+├── tools.c         →
 └── codexion.h      → structs and prototypes
 ```
 
 - 🔄 SÉQUENCE
 ```
      ALL CODER                    HEAP_ARBITER                           MONITOR
-│                          │                                         │                    │
+|                          │                                         │                    │
 |    want 2 dongles        │                                         │                    │
 |                        ---->     go into heap                      │                    │
 ├    wait for a signal     │                                         │                    │
 │                          |     notify -dongle free                 |                    │
 │                          |     determin who has priority           |                    │
-│     ⬆️ WAKE UP ⬆️       │       🔔 signal 🔔                     │                    │
+│     ⬆️ WAKE UP ⬆️         │       🔔 signal 🔔                     │                    │
 |     take 2 dongles       │                                         │                    │
 |     compile              │                                         |    watch           |
 |     release 2 dongles    │                                         │                    │
-|     notify arbiter      -->  dongle free(restart process priority) |                    |
+|     notify arbiter -->  dongle free(restart process priority) |               |
 |     debug                │                                         │                    │
 |     refactor             │                                         │                    │
 |                          │                                         |if burnout → stop ! │
@@ -123,12 +124,18 @@ make re
 ### <h3 style="color:#39ff14">Run manually</h3>
 
 ```bash
+explanation :
+./codexion [number_of_coders] [time_to_burnout] [time_to_compile]
+           [time_to_debug] [time_to_refactor]
+           [number_of_compiles_required] [dongle_cooldown] [scheduler]
 ./codexion 5 800 200 100 100 3 50 fifo
 ./codexion 5 800 200 100 100 3 50 edf
-explanation :
-./codexion [number_of_coders] [time_to_burnout] [time_to_compile] 
-           [time_to_debug] [time_to_refactor] 
-           [number_of_compiles_required] [dongle_cooldown] [scheduler]
+./codexion 5 2000 200 200 200 10 0 fifo | grep -E "compiling|debugging|refactoring|dongle|burned" | sort | uniq -c
+./codexion 5 2000 200 200 200 10 0 fifo | grep -c "is compiling"
+./codexion 5 2000 200 200 200 10 0 fifo | grep -c "is debugging"
+./codexion 5 2000 200 200 200 10 0 fifo | grep -c "is refactoring"
+./codexion 5 2000 200 200 200 10 0 fifo | grep -c "has taken a dongle"
+./codexion 5 2000 200 200 200 10 0 fifo | grep -c "burned out"
 ```
 
 ## <h2 style ="color:#00d9ff">"Blocking cases handled"</h2>

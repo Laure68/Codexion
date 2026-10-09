@@ -4,13 +4,13 @@ NAME = codexion
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread
 
-SRC =	coder.c
-		dongle.c
-		heap_arbiter.c
-		main.c
-		monitor.c
-		parser.c
-		simulation.c
+SRC =	coder.c\
+		dongle.c\
+		heap_arbiter.c\
+		main.c\
+		monitor.c\
+		parser.c\
+		simulation.c\
 		tools.c
 
 
