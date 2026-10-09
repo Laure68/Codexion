@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/09 11:41:45 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/09 11:42:04 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/09 11:55:58 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int		check_cooldown(t_dongle	*dongle);
 void	dongle_destroy(t_dongle	*dongle);
 
 /*heap_arbiter*/
-int		heap_arbiter_pusht_simulation(t_simulation *data, t_coder *coder);
+int		heap_arbiter_push(t_simulation *data, t_coder *coder);
 t_coder	*heap_arbiter_pop(t_arbiter *arbiter, int i);
 void	heap_arbiter_wake(t_simulation *data);
 int		heap_arbiter_free(t_simulation *data);
