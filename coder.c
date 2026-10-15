@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/09 11:39:50 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/09 11:42:45 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/15 12:20:59 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,16 @@ void	*coder_routine(void *arg)
 	t_coder	*coder;
 
 	coder = (t_coder *)arg;
+	if (coder->id % 2 == 0)
+		usleep(1000);
 	while (get_flag_end(coder->data) == 0)
 	{
 		if (heap_arbiter_push(coder->data, coder) == 0
 			&& coder_compile(coder) == 0)
 		{
+			if (coder->compile_count
+				== coder->data->number_of_compiles_required)
+				return (NULL);
 			coder_debug(coder);
 			coder_refactor(coder);
 		}
@@ -33,25 +38,28 @@ void	*coder_routine(void *arg)
 /*coder_compile()      → take dongles + compile + release*/
 int	coder_compile(t_coder *coder)
 {
+	if (check_end(coder->data) == 1)
+		return (1);
 	if (coder->dongle_left == coder->dongle_right)
 	{
 		while (get_flag_end(coder->data) == 0)
-			usleep(1000);
+			usleep(100);
 		dongle_release(coder->dongle_right, 0);
 		return (1);
 	}
 	pthread_mutex_lock(&coder->mutex);
 	coder->last_compile_time = get_time_ms();
 	pthread_mutex_unlock(&coder->mutex);
-	log_print(coder, "is compiling");
+	log_print_comp(coder);
 	usleep(coder->data->time_to_compile * 1000);
 	dongle_release(coder->dongle_left, 1);
 	dongle_release(coder->dongle_right, 1);
 	pthread_mutex_lock(&coder->mutex);
 	coder->compile_count += 1;
 	pthread_mutex_unlock(&coder->mutex);
-	check_end(coder->data);
 	heap_arbiter_wake(coder->data);
+	if (check_end(coder->data) == 1)
+		return (1);
 	return (0);
 }
 
@@ -74,6 +82,8 @@ void	log_print(t_coder *coder, char *information)
 {
 	long	timestamp;
 
+	if (check_end(coder->data) == 1)
+		return ;
 	pthread_mutex_lock(&coder->data->mutex_print);
 	if (get_flag_end(coder->data) == 0)
 	{

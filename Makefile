@@ -7,6 +7,8 @@ CFLAGS = -Wall -Wextra -Werror -pthread
 SRC =	coder.c\
 		dongle.c\
 		heap_arbiter.c\
+		heap_compare.c\
+		heap_compare_edf.c\
 		main.c\
 		monitor.c\
 		parser.c\

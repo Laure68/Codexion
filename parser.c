@@ -51,17 +51,27 @@ int	parse_args_data(char *av[], t_simulation *data)
 int	check_numbers(char *av[])
 {
 	int	i;
+	int	j;
 
 	i = 1;
 	while (i <= 7)
 	{
-		if (atoi (av[i]) < 0)
+		if (av[i][0] == '\0')
 		{
-			fprintf(stderr, "negative number\n");
+			fprintf(stderr, "empty line\n");
 			return (1);
 		}
-		else
-			i++;
+		j = 0;
+		while (av[i][j])
+		{
+			if (av[i][j] < '0' || av[i][j] > '9')
+			{
+				fprintf(stderr, "negative number or not integer\n");
+				return (1);
+			}
+			j++;
+		}
+		i++;
 	}
 	return (0);
 }
@@ -80,9 +90,9 @@ int	check_scheduler(char *av[])
 /* check_coders()      → verify minimum 2 coders*/
 int	check_coders(char *av[])
 {
-	if (atoi (av[1]) < 1)
+	if (atoi (av[1]) < 1 || atoi(av[6]) < 1)
 	{
-		fprintf(stderr, "minimum 1 coders\n");
+		fprintf(stderr, "minimum 1 coder or nb compil\n");
 		return (1);
 	}
 	return (0);

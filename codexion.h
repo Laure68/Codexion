@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/09 11:41:45 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/09 11:55:58 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/15 12:21:15 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct s_dongle
 {
 	int				id;
 	int				is_available;
+	int				reserved;
 	pthread_mutex_t	mutex;
 	long			last_released_time;
 	long			dongle_cooldown;
@@ -89,7 +90,7 @@ void	log_print(t_coder *coder, char *information);
 
 /*dongle*/
 void	dongle_init(t_dongle *dongle, t_simulation *data, int index);
-int		dongle_take(t_dongle *dongle, t_coder *coder);
+int		dongle_take(t_dongle *dongle);
 void	dongle_release(t_dongle	*dongle, int cooldown);
 int		check_cooldown(t_dongle	*dongle);
 void	dongle_destroy(t_dongle	*dongle);
@@ -128,11 +129,18 @@ int		init_dongles(t_simulation *data);
 int		init_arbiter(t_simulation *data);
 int		check_end(t_simulation *data);
 
+/*heap_compare*/
+int		is_blocked(t_coder *coder);
+void	reserve_dongles(t_coder *coder);
+void	clear_reserved(t_arbiter *arbiter);
+int		next_by_deadline(t_arbiter *arbiter, t_coder *prev);
+
 /*tools*/
 long	get_time_ms(void);
 int		heap_compare_fifo(t_arbiter *arbiter);
 int		heap_compare_edf(t_arbiter *arbiter);
 int		coder_take_dongles(t_coder *coder);
 int		dongles_free(t_coder *coder);
+void	log_print_comp(t_coder *coder);
 
 #endif

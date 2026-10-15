@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:28:36 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/09 11:43:40 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/15 12:12:29 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ void	dongle_init(t_dongle *dongle, t_simulation *data, int ind)
 }
 
 /*dongle_take()        → lock + check availability + take*/
-int	dongle_take(t_dongle *dongle, t_coder *coder)
+int	dongle_take(t_dongle *dongle)
 {
 	pthread_mutex_lock(&dongle->mutex);
 	if (check_cooldown(dongle) == 0
 		&& dongle->is_available == 1)
 	{
 		dongle->is_available = 0;
-		log_print(coder, "has taken a dongle");
+		// log_print(coder, "has taken a dongle");
 	}
 	else
 	{

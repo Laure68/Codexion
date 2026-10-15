@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tools.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lmeny <marvin@42.fr>                       +#+  +:+       +#+        */
+/*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:30:43 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/05 10:30:54 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/15 12:21:39 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,48 +21,13 @@ long	get_time_ms(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int	heap_compare_fifo(t_arbiter *arbiter)
-{
-	int	i;
-
-	i = 0;
-	while (i < arbiter->nb_coder_wait)
-	{
-		if (dongles_free(arbiter->coder_queue[i]))
-			return (i);
-		i++;
-	}
-	return (-1);
-}
-
-/*for heap_arbiter_compare()   */
-int	heap_compare_edf(t_arbiter *arbiter)
-{
-	t_coder	*current;
-	int		i;
-	int		best_position;
-
-	i = 0;
-	best_position = -1;
-	while (i < arbiter->nb_coder_wait)
-	{
-		current = arbiter->coder_queue[i];
-		if (dongles_free(current) && (best_position == -1
-				|| current->last_compile_time
-				< arbiter->coder_queue[best_position]->last_compile_time))
-			best_position = i;
-		i++;
-	}
-	return (best_position);
-}
-
 int	coder_take_dongles(t_coder *coder)
 {
-	if (dongle_take(coder->dongle_right, coder) != 0)
+	if (dongle_take(coder->dongle_right) != 0)
 		return (1);
 	if (coder->dongle_left == coder->dongle_right)
 		return (0);
-	if (dongle_take(coder->dongle_left, coder) != 0)
+	if (dongle_take(coder->dongle_left) != 0)
 	{
 		dongle_release(coder->dongle_right, 0);
 		return (1);
@@ -88,4 +53,26 @@ int	dongles_free(t_coder *coder)
 		left_ok = 1;
 	pthread_mutex_unlock(&coder->dongle_left->mutex);
 	return (right_ok && left_ok);
+}
+
+/*log_print()          → print timestamp + coder state*/
+void	log_print_comp(t_coder *coder)
+{
+	long	timestamp;
+	char	*take;
+	char	*comp;
+
+	take = "has taken a dongle";
+	comp = "is compiling";
+	if (check_end(coder->data) == 1)
+		return ;
+	pthread_mutex_lock(&coder->data->mutex_print);
+	if (get_flag_end(coder->data) == 0)
+	{
+		timestamp = (get_time_ms() - (coder->data->start_time));
+		printf("%ld %d %s\n", timestamp, coder->id, take);
+		printf("%ld %d %s\n", timestamp, coder->id, take);
+		printf("%ld %d %s\n", timestamp, coder->id, comp);
+	}
+	pthread_mutex_unlock(&coder->data->mutex_print);
 }

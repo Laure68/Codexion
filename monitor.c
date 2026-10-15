@@ -6,7 +6,7 @@
 /*   By: lmeny <lmeny@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/05 10:29:56 by lmeny             #+#    #+#             */
-/*   Updated: 2026/10/09 11:26:06 by lmeny            ###   ########.fr       */
+/*   Updated: 2026/10/15 13:08:06 by lmeny            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	is_burned_out(t_simulation *data, int i)
 	pthread_mutex_lock(&data->coders[i].mutex);
 	last_compile = data->coders[i].last_compile_time;
 	pthread_mutex_unlock(&data->coders[i].mutex);
-	if (get_time_ms() - last_compile > data->time_to_burnout)
+	if (get_time_ms() - last_compile >= data->time_to_burnout)
 	{
 		log_print(&data->coders[i], "burned out");
 		set_flag_end(data);

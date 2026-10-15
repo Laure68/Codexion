@@ -4,21 +4,23 @@
 
 ## <h2 style ="color:#00d9ff">“Description”</h2>
 
-- Codexion is a project written in C. 
+- Codexion is a project written in C.
+
 - **It's a simulation of coders who share dongles.**
-- The coders sit 🪑 in circle. 
+
+- The coders sit 🪑 in circle.
 - There is one dongle 🎙 between each pair of coders.
 - One coder must compiling, debugging, refactoring and no burned out.
 - To compile, a coder needs two dongles🎙🎙.
 - After compiling, he debugs.
 - After debugging, he refactors.
 - After refactoring, he starts again.
-- If a coder wait too long without compiling (time_to_burnout), 
+- If a coder wait too long without compiling (time_to_burnout),
 he burns out and the simulation must stop.
 - Else the simulation stop when every coder has compiled enough times (number_of_compiles_required).
 
 - For this project we must uses threads and mutex and variable condition for sharing dongles.
-- (explanation in this readme on part : "Blocking cases handled" and "Thread synchronization mechanisms"). 
+- (explanation in this readme on part : "Blocking cases handled" and "Thread synchronization mechanisms").
 - An arbiter chooses who gets dongles, with two schedulers: Fifo (first in first out) or edf (Earliest Deadline First).
 
 
@@ -82,7 +84,7 @@ make re     # rebuild everything
 
 ```bash
 order explanation :
-./codexion [number_of_coders] [time_to_burnout] [time_to_compile][time_to_debug] 
+./codexion [number_of_coders] [time_to_burnout] [time_to_compile][time_to_debug]
 [time_to_refactor][number_of_compiles_required] [dongle_cooldown] [scheduler]
 
 ./codexion 5 800 200 100 100 3 50 fifo
@@ -91,7 +93,7 @@ order explanation :
 # grep -E + cut + uniq -c : Show how many times each action happens, all in one list.
 ./codexion 5 2000 200 200 200 10 0 fifo | grep -E "compiling|debugging|refactoring|dongle|burned" | cut -d' ' -f3- | sort | uniq -c
 
-# grep -c: Count how many times one action happens 
+# grep -c: Count how many times one action happens
 ./codexion 5 2000 200 200 200 10 0 fifo | grep -c "is compiling"
 ./codexion 5 2000 200 200 200 10 0 fifo | grep -c "is debugging"
 ./codexion 5 2000 200 200 200 10 0 fifo | grep -c "is refactoring"
@@ -108,25 +110,24 @@ valgrind --tool=helgrind ./codexion 5 2000 200 100 100 3 50 fifo
 ## <h2 style="color:#00d9ff">"Project Structure"</h2>
 ### <h3 style="color:#39ff14">🏗️ STRUCTS</h3>
 
-- **t_simulation:** 
-- — The central hub of the program.
+**t_simulation: — The central hub of the program.**
 - Holds all the parameters needed to run the simulation
 (number of coders, timings, flags) and gives every
 thread access to shared resources (coders, dongles, arbiter).
-- **t_coder:** 
-- — Represents a single coder.
+
+**t_coder: — Represents a single coder.**
 - Holds all the information specific to one coder :
 its id, compile count, last compile time,
 and pointers to its left and right dongles.
-- **t_dongle:** 
-- — Represents a single dongle (shared resource).
-Holds its :
-- availability (free or taken), 
+
+**t_dongle: — Represents a single dongle (shared resource).**
+- Holds its :
+- availability (free or taken),
 - the last released time (last_released_time)
-- the cooldown duration, 
+- the cooldown duration,
 - and a mutex to protect concurrent access.
-- **t_arbiter:** 
-- — The scheduler and notifier of the simulation.
+
+**t_arbiter: — The scheduler and notifier of the simulation.**
 - Manages the waiting queue (array coder_queue) of waiting coders.
 - When coders wake up (via a condition variable 🔔), the
 chosen policy (fifo or edf) decides which
@@ -143,7 +144,8 @@ codexion/
 ├── dongle.c        → take, release, cooldown
 ├── monitor.c       → burnout detection
 ├── heap_arbiter.c  → priority queue + arbitrage (fifo/edf)
-├── tools.c         →
+├── tools.c         → complementary function fifo/edf + dongle_free +
+|                    coder_take_dongle and get_time_ms
 └── codexion.h      → structs and prototypes
 ```
 ### <h3 style="color:#39ff14">🔄 SÉQUENCE</h3>
@@ -164,6 +166,7 @@ codexion/
 |                            |  among the coders whose 2       |                            |
 |                            | dongles are free (cooldown over)|                            |
 |   <------ wake up -------- |  the others go back to sleep    |                            |
+|							 |								   |							|
 |3. winner takes 2 dongles   |                                 |                            |
 |   "has taken a dongle"     |                                 |                            |
 |   leaves the queue         |                                 |                            |
@@ -186,7 +189,6 @@ codexion/
 |                            |                                 |- broadcast                 |
 |END: flag_end = 1 -> coders leave their loop -> main joins the threads -> cleanup          |
 ```
-
 
 
 ## <h2 style ="color:#00d9ff">"Blocking cases handled"</h2>
